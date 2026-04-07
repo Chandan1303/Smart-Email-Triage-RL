@@ -406,16 +406,14 @@ with gr.Blocks(title="Email Triage RL", theme=gr.themes.Default(), css=CSS) as d
                 interactive=True,
             )
 
-            # Desktop: 2-col grid via HTML wrapper; Mobile: stacks automatically
-            gr.HTML('<div class="play-grid" id="play-grid">')
+            # Desktop: 2-col grid via CSS; Mobile: stacks automatically
+            with gr.Row():
+                # Left column — email card
+                with gr.Column(scale=3):
+                    email_out = gr.HTML(value=email_html(play["email"]))
 
-            # Left column — email card
-            with gr.Column():
-                email_out = gr.HTML(value=email_html(play["email"]))
-
-            # Right column — action panel
-            with gr.Column():
-                gr.HTML('<div class="action-panel">')
+                # Right column — action panel
+                with gr.Column(scale=2):
                 action_dd = gr.Dropdown(
                     choices=PHASE_CHOICES[0],
                     label=PHASE_HINT[0],
@@ -423,13 +421,10 @@ with gr.Blocks(title="Email Triage RL", theme=gr.themes.Default(), css=CSS) as d
                     interactive=True,
                 )
                 with gr.Row():
-                    skip_btn   = gr.Button("Next Email",     variant="secondary", scale=1)
-                    submit_btn = gr.Button("Submit Action",  variant="primary",   scale=2)
-                reward_out = gr.HTML(value='<p style="color:#a0aec0;font-size:0.85rem;margin:10px 0;text-align:center;">Submit an action to see your reward</p>')
-                bd_out     = gr.HTML(value='<p style="color:#a0aec0;font-size:0.85rem;margin:4px 0;text-align:center;">Score breakdown will appear here</p>')
-                gr.HTML('</div>')
-
-            gr.HTML('</div>')  # close play-grid
+                    skip_btn   = gr.Button("Next Email",    variant="secondary", scale=1)
+                    submit_btn = gr.Button("Submit Action", variant="primary",   scale=2)
+                reward_out = gr.HTML(value='<div style="min-height:20px;color:#a0aec0;font-size:0.85rem;text-align:center;padding:8px 0;">Submit an action to see your reward</div>')
+                bd_out     = gr.HTML(value='<div style="min-height:20px;color:#a0aec0;font-size:0.85rem;text-align:center;padding:4px 0;">Score breakdown will appear here</div>')
 
             # Reward guide
             gr.HTML("""
