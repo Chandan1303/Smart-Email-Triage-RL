@@ -153,6 +153,23 @@ class EmailEnv:
     def valid_actions(self) -> list:
         return self.PHASE_ACTIONS.get(self._phase, [])
 
+    def state(self) -> dict:
+        """Return current environment state as a typed dict (OpenEnv compliance)."""
+        if self.current_email is None:
+            return {}
+        e = self.current_email
+        return {
+            "sender":     e.sender,
+            "subject":    e.subject,
+            "body":       e.body,
+            "label":      e.label,
+            "priority":   e.priority,
+            "difficulty": e.difficulty,
+            "phase":      self._phase,
+            "phase_name": self.PHASE_NAMES.get(self._phase, "complete"),
+            "valid_actions": self.valid_actions,
+        }
+
     def set_difficulty(self, difficulty: str | None) -> None:
         """Filter the email pool to the given difficulty level and reset."""
         import json

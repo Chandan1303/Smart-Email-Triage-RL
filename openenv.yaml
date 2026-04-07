@@ -1,0 +1,59 @@
+name: email-triage-rl
+version: "1.0.0"
+description: >
+  A reinforcement learning environment for email triage. An AI agent reads
+  incoming emails and must classify them, set priority, and decide on an action
+  (flag, archive, or done) across a 3-step episode. Rewards reflect real-world
+  triage quality.
+
+entry_point: environment.py
+app_file: app.py
+
+state:
+  type: object
+  properties:
+    sender:     { type: string }
+    subject:    { type: string }
+    body:       { type: string }
+    label:      { type: string, enum: [work, personal, spam] }
+    priority:   { type: string, enum: [high, medium, low] }
+    difficulty: { type: string, enum: [easy, medium, hard] }
+
+actions:
+  - classify_work
+  - classify_personal
+  - classify_spam
+  - set_high_priority
+  - set_medium_priority
+  - set_low_priority
+  - flag_urgent
+  - archive_email
+  - done
+
+tasks:
+  - id: task_classify
+    name: Email Classification
+    description: Correctly classify the email as work, personal, or spam
+    grader: graders.py
+    reward_range: [0.0, 1.0]
+
+  - id: task_priority
+    name: Priority Setting
+    description: Correctly identify the urgency level of the email
+    grader: graders.py
+    reward_range: [0.0, 1.0]
+
+  - id: task_action
+    name: Triage Action
+    description: Flag urgent emails, archive spam, or mark done appropriately
+    grader: graders.py
+    reward_range: [0.0, 1.0]
+
+reward:
+  min: 0.0
+  max: 1.0
+  description: Normalized score across classification, priority, and action sub-tasks
+
+episodes:
+  max_steps: 3
+  reset_on_done: true
