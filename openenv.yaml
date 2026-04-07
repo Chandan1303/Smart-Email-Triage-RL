@@ -9,26 +9,83 @@ description: >
 entry_point: environment.py
 app_file: app.py
 
-state:
+observation_space:
   type: object
   properties:
-    sender:     { type: string }
-    subject:    { type: string }
-    body:       { type: string }
-    label:      { type: string, enum: [work, personal, spam] }
-    priority:   { type: string, enum: [high, medium, low] }
-    difficulty: { type: string, enum: [easy, medium, hard] }
+    sender:
+      type: string
+    subject:
+      type: string
+    body:
+      type: string
+    label:
+      type: string
+      enum: [work, personal, spam]
+    priority:
+      type: string
+      enum: [high, medium, low]
+    difficulty:
+      type: string
+      enum: [easy, medium, hard]
+    phase:
+      type: integer
+      enum: [0, 1, 2]
+    phase_name:
+      type: string
+    valid_actions:
+      type: array
+      items:
+        type: string
 
-actions:
-  - classify_work
-  - classify_personal
-  - classify_spam
-  - set_high_priority
-  - set_medium_priority
-  - set_low_priority
-  - flag_urgent
-  - archive_email
-  - done
+action_space:
+  type: string
+  enum:
+    - classify_work
+    - classify_personal
+    - classify_spam
+    - set_high_priority
+    - set_medium_priority
+    - set_low_priority
+    - flag_urgent
+    - archive_email
+    - done
+
+reward:
+  type: number
+  min: 0.0
+  max: 1.0
+  description: Normalized reward score in range [0.0, 1.0]
+
+endpoints:
+  reset:
+    method: POST
+    path: /reset
+    response:
+      type: object
+      description: Initial observation after reset
+  step:
+    method: POST
+    path: /step
+    request:
+      type: object
+      properties:
+        action:
+          type: string
+    response:
+      type: object
+      properties:
+        state:
+          type: object
+        reward:
+          type: number
+        done:
+          type: boolean
+        info:
+          type: object
+
+episodes:
+  max_steps: 3
+  reset_on_done: true
 
 tasks:
   - id: task_classify
@@ -48,12 +105,3 @@ tasks:
     description: Flag urgent emails, archive spam, or mark done appropriately
     grader: graders.py
     reward_range: [0.0, 1.0]
-
-reward:
-  min: 0.0
-  max: 1.0
-  description: Normalized score across classification, priority, and action sub-tasks
-
-episodes:
-  max_steps: 3
-  reset_on_done: true

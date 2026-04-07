@@ -40,8 +40,10 @@ def api_step(body: StepRequest):
     except (ValueError, RuntimeError) as e:
         raise HTTPException(status_code=400, detail=str(e))
     bd = info.get("final_breakdown") or info["breakdown"]
+    state = api_env.state()
+    state["valid_actions"] = api_env.valid_actions
     return JSONResponse({
-        "state":  api_env.state(),
+        "state":  state,
         "reward": normalize_reward(raw_reward),
         "done":   done,
         "info": {
