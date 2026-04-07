@@ -22,10 +22,19 @@ class StepRequest(BaseModel):
 @app.post("/reset")
 def api_reset():
     api_env.reset()
-    return JSONResponse(api_env.state())
+    state = api_env.state()
+    state["valid_actions"] = api_env.valid_actions
+    return JSONResponse(state)
 
 @app.post("/step")
 def api_step(body: StepRequest):
+    # Auto-reset if env hasn't been initialised yet
+    if api_env.current_email is None:
+        api_env.reset()
+    # If the action belongs to phase 0 but we're in a later phase, reset first
+    phase0_actions = EmailEnv.PHASE_ACTIONS[0]
+    if body.action in phase0_actions and api_env.current_phase != 0:
+        api_env.reset()
     try:
         _email, raw_reward, done, info = api_env.step(body.action)
     except (ValueError, RuntimeError) as e:
