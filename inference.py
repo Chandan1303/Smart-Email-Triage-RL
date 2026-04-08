@@ -14,6 +14,12 @@ API_BASE_URL = os.environ.get("API_BASE_URL", "https://api.openai.com/v1")
 MODEL_NAME   = os.environ.get("MODEL_NAME",   "gpt-4o-mini")
 HF_TOKEN     = os.environ.get("HF_TOKEN",     "")
 
+def normalize_reward(raw: int) -> float:
+    """Map raw reward (-28 to +23) to 0.0–1.0 range (used by app.py)."""
+    MIN_RAW, MAX_RAW = -28, 23
+    return round(max(0.0, min(1.0, (raw - MIN_RAW) / (MAX_RAW - MIN_RAW))), 4)
+
+
 PHASE_VALID = {
     0: ["classify_work", "classify_personal", "classify_spam"],
     1: ["set_high_priority", "set_medium_priority", "set_low_priority"],
