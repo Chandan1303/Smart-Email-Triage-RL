@@ -12,10 +12,11 @@ dependencies = [
     "openai>=1.0.0",
     "fastapi>=0.110.0",
     "uvicorn>=0.29.0",
+    "openenv-core>=0.2.0",
 ]
 
 [project.scripts]
-serve = "app:app"
+server = "app:app"
 
 [tool.setuptools.packages.find]
 where = ["."]
