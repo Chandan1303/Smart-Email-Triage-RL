@@ -1,11 +1,19 @@
 """
 server/app.py — entry point for multi-mode deployment (openenv validate requirement).
-Imports and re-exports the FastAPI app from the root app.py.
 """
 import sys
 import os
 
-# Ensure root is on the path so we can import from app.py
+# Ensure root is on the path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from app import app  # noqa: F401 — re-export for openenv server entry point
+from app import app  # noqa: F401
+
+
+def main():
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=7860)
+
+
+if __name__ == "__main__":
+    main()
